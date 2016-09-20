@@ -1,5 +1,6 @@
-setwd('Projects/Geostat2016/dat/')
-learn <- read.csv('train.csv', stringsAsFactors = F)
+# Aim: load and add vars to the learning dataset
+
+learn = readr::read_csv("dat/train.csv")
 
 # get frequency of each species within parent
 library(dplyr)
