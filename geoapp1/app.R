@@ -9,6 +9,8 @@
 
 library(shiny)
 library(leaflet)
+library(sp)
+library(mapview)
 # Define UI for application that draws a histogram
 ui <- shinyUI(fluidPage(
    
@@ -22,25 +24,27 @@ ui <- shinyUI(fluidPage(
                      "Resolution (cell size, m):",
                      min = 1,
                      max = 50,
-                     value = 30)
+                     value = 30),
+         selectInput("parent",
+                     "Parent soil type:",
+                     choices = c("a", "b"))
       ),
       
       # Show a plot of the generated distribution
       mainPanel(
         # Use a separate observer to recreate the legend as needed.
-        leafletOutput("mymap")
+        leafletOutput("mymap"),
+        mapview:::plainViewOutput("test")
       )
    )
 ))
 
 # Define server logic required to draw a histogram
 server <- shinyServer(function(input, output) {
-   
+  p = readRDS("../dat/p.Rds")
+  m <- mapview(p)
   output$mymap <- renderLeaflet({
-    leaflet() %>%
-      addProviderTiles("Stamen.TonerLite",
-                       options = providerTileOptions(noWrap = TRUE)
-      )
+    m@map
   })
   
 })

@@ -10,4 +10,5 @@ str(d)
 source("R/load-dat.R")
 p = SpatialPointsDataFrame(cbind(learn$X, learn$Y), data = learn)
 points(p)
-
+head(p)
+saveRDS(p, "dat/p.Rds")
