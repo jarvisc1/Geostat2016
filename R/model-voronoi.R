@@ -1,8 +1,8 @@
 library(dismo)
 
-set.seed(5132015)
+# Fit Voronoi model
+set.seed(678)
 kf <- kfold(nrow(p))
-k <- 1
 rcm <- list()
 cm <- rep(NA, 5)
 for (k in 1:5) {
@@ -13,19 +13,16 @@ for (k in 1:5) {
   rcm[k] <- list(test$TAXNUSDA==pp$TAXNUSDA)
   cm[k] <-  table(rcm[1])[2]/length(test)
 }
-rcm[1]
-# percentage correct
-cm
-mean(cm)
 
+# Print Percentage correct
+cm # for each model
+mean(cm) # average
 
-# raw tabulations
+# Compare true and false for first model
 table(rcm[1])
-table(rcm[2])
-table(rcm[3])
-table(rcm[4])
-table(rcm[5])
-p 
 
-
+# Predict for validation and export as csv
+v <- voronoi(p)
+pp <- raster::extract(v, pv)
+readr::write_csv(pp, "dat/predict-voronoi.csv")
 

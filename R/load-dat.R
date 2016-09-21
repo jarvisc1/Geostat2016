@@ -1,6 +1,7 @@
 # Aim: load and add vars to the learning dataset
 
 learn = readr::read_csv("dat/train.csv")
+validate = readr::read_csv("dat/validation.csv")
 
 # # get frequency of each species within parent
 # library(dplyr)
