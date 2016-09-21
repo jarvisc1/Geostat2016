@@ -1,4 +1,5 @@
 library(RSAGA)
+## Needs to be changed to machine directory
 saga_cmd <- shQuote("C:/Program Files/saga_2.3.1_x64/saga_cmd.exe")
 
 saga_DEM_derivatives <- function(INPUT, MASK=NULL, sel=c("SLP","TWI","CRV","VBF","VDP","OPN","DVM")){

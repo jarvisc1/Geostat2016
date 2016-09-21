@@ -21,7 +21,7 @@ saveRDS(pv, "dat/pv.Rds")
 
 
 
-# Extract raster variables for testing points
+# Extract raster variables for training points
 b <- brick(d)
 trp1 <- raster::extract(b,  p)
 rp <- as.data.frame(trp1)
@@ -53,3 +53,27 @@ p_vrp <- SpatialPointsDataFrame(pv, data = vrp)
 head(p_vrp)
 saveRDS(p_vrp, "dat/validate_rp.RDS")
 
+# Extract Dem values
+dem     <- raster('dat/DEMNED6_100m.sdat')
+cprof   <- raster('dat/DEMNED6_100m_cprof.sdat')
+devmean <- raster('dat/DEMNED6_100m_devmean.sdat')
+openn   <- raster('dat/DEMNED6_100m_openn.sdat')
+openp   <- raster('dat/DEMNED6_100m_openp.sdat')
+slope   <- raster('dat/DEMNED6_100m_slope.sdat')
+twi     <- raster('dat/DEMNED6_100m_twi.sdat')
+vbf     <- raster('dat/DEMNED6_100m_vbf.sdat')
+vdepth  <- raster('dat/DEMNED6_100m_vdepth.sdat')
+
+demb <- brick(cprof, devmean, openn, openp, slope, twi, vbf, vdepth)
+
+# Extract for training
+trp2 <- raster::extract(demb,  p)
+rp1 <- as.data.frame(trp2)
+
+rp_all <- cbind(rp, rp1)
+
+# Extract for validation
+vrp3 <- raster::extract(demb,  pv)
+vrp2 <- as.data.frame(vrp3)
+
+vrp_all <- cbind(vrp, vrp1)
