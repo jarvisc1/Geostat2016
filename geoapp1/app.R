@@ -13,32 +13,25 @@ library(sp)
 library(mapview)
 library(raster)
 # Define UI for application that draws a histogram
-ui <- shinyUI(fluidPage(
-   
-   # Application title
-   titlePanel("Predicting soil type using spatial and attribute data"),
-   
-   # Sidebar with a slider input for number of bins 
-   sidebarLayout(
-      sidebarPanel(
-         sliderInput("bins",
-                     "Resolution (cell size, m):",
-                     min = 100,
-                     max = 1000,
-                     step = 100, 
-                     value = 500),
-         selectInput("parent",
-                     "Parent soil type:",
-                     choices = c("a", "b"))
-      ),
-      
-      # Show a plot of the generated distribution
-      mainPanel(
-        # Use a separate observer to recreate the legend as needed.
-        leafletOutput("m")
-        # mapview:::plainViewOutput("test")
-      )
-   )
+ui = shinyUI(fluidPage(
+  fluidRow(
+    column(2,
+           "Controls",
+           sliderInput("bins",
+                       "Resolution (cell size, m):",
+                       min = 100,
+                       max = 1000,
+                       step = 100, 
+                       value = 500),
+           selectInput("parent",
+                       "Parent soil type:",
+                       choices = c("a", "b"))
+    ),
+    column(10,
+           "Interactive map",
+           leafletOutput("m", width ="100%", height = "800")
+    )
+  )
 ))
 
 # Define server logic required to draw a histogram
