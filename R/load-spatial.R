@@ -10,13 +10,12 @@ str(d)
 # Load learning data
 source("R/load-dat.R")
 p = SpatialPointsDataFrame(cbind(learn$X, learn$Y), data = learn)
-points(p)
+# points(p) # commented out as crashing
 head(p)
 saveRDS(p, "dat/p.Rds")
 
 # load validation data
 pv = SpatialPointsDataFrame(cbind(validate$X, validate$Y), data = validate)
-points(pv)
 head(pv)
 saveRDS(pv, "dat/pv.Rds")
 
