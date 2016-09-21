@@ -1,0 +1,8 @@
+Name,Desc
+p,Points data for test datset
+pv,Points data for validation datset
+SPCD2016_covs100m,Raw Raster data file
+train,Raw train csv file
+train_rp,Extracted raster values for p data
+validate_rp,Extracted raster values for pv data
+validation,Raw validation csv file
