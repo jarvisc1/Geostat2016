@@ -13,9 +13,10 @@ str(d)
 # saveRDS(p, "dat/p.Rds")
 p = readRDS("dat/p.Rds")
 head(p)
-saveRDS(p, "dat/p.Rds")
+# saveRDS(p, "dat/p.Rds")
 
 # load validation data
+validate = read.csv("dat/validation.csv")
 pv = SpatialPointsDataFrame(cbind(validate$X, validate$Y), data = validate)
 points(pv)
 head(pv)
@@ -53,5 +54,5 @@ vrp$PMTGSS7_100m <- base::factor(as.factor(vrp$PMTGSS7_100m),
 p_vrp <- SpatialPointsDataFrame(pv, data = vrp)
 
 head(p_vrp)
-saveRDS(p_vrp, "dat/validate_rp.RDS")
+# saveRDS(p_vrp, "dat/validate_rp.RDS")
 

@@ -16,16 +16,17 @@ library(raster)
 ui <- shinyUI(fluidPage(
    
    # Application title
-   titlePanel("Old Faithful Geyser Data"),
+   titlePanel("Predicting soil type using spatial and attribute data"),
    
    # Sidebar with a slider input for number of bins 
    sidebarLayout(
       sidebarPanel(
          sliderInput("bins",
                      "Resolution (cell size, m):",
-                     min = 1,
-                     max = 50,
-                     value = 100),
+                     min = 100,
+                     max = 1000,
+                     step = 100, 
+                     value = 500),
          selectInput("parent",
                      "Parent soil type:",
                      choices = c("a", "b"))
@@ -47,27 +48,29 @@ server <- shinyServer(function(input, output) {
   initial_lon = 25.331 
   
   p = readRDS("training.Rds")
+  v = readRDS("v.Rds")
   r = readRDS("raster-mini.Rds")
 
   # m <- mapview(r) + mapview(p)
   output$m = renderLeaflet({
     
-    r = aggregate(r, input$bins)
+    if(input$bins > 100){
+      r = aggregate(r, input$bins / 100)
+    }
     
-    aproj = "+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs" # Africa_Albers_Equal_Area_Conic
-    crs(r) = crs(p) = aproj
+    projections = c("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs") # Africa_Albers_Equal_Area_Conic 
+    aproj = projections
+    crs(r) = crs(p) = crs(v) = aproj
     p = spTransform(p, CRS("+init=epsg:4326"))
+    v = spTransform(v, CRS("+init=epsg:4326"))
     r = projectRaster(r, crs = "+init=epsg:4326")
-    
-    # crs_aeq = stplanr::crs_select_aeq(p)
-    
-    bpol = stplanr::bb2poly(r)
-    proj4string(bpol) = proj4string(r)
-    p = p[bpol,]
     
     r_sub = r$DEMNED6_100m
     
-    leaflet() %>% addCircles(data = p) %>% addRasterImage(r_sub) %>%
+    leaflet() %>%
+      addCircles(data = p) %>%
+      addCircles(data = v, color = "grey") %>%
+      addRasterImage(r_sub) %>%
       setView(lng = initial_lon, lat = initial_lat, zoom = 11)
   })
   
