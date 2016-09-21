@@ -7,8 +7,8 @@ str(d)
 # plot(d) # commented out as takes time
 
 # Load learning data
-source("R/load-dat.R")
-p = SpatialPointsDataFrame(cbind(learn$X, learn$Y), data = learn)
-points(p)
+# source("R/load-dat.R")
+# p = SpatialPointsDataFrame(cbind(learn$X, learn$Y), data = learn)
+# saveRDS(p, "dat/p.Rds")
+p = readRDS("dat/p.Rds")
 head(p)
-saveRDS(p, "dat/p.Rds")
