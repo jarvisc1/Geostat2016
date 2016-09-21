@@ -1,3 +1,5 @@
+# Aim: Fit Voronoi model and predict
+
 library(dismo)
 
 # Fit Voronoi model
