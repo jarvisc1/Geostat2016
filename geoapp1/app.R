@@ -47,6 +47,8 @@ server <- shinyServer(function(input, output) {
   # m <- mapview(r) + mapview(p)
   output$m = renderLeaflet({
     
+    pal = colorFactor(palette = "RdYlBu", domain = unique(p$TAXNUSDA))
+    
     if(input$bins > 100){
       r = aggregate(r, input$bins / 100)
     }
@@ -62,9 +64,10 @@ server <- shinyServer(function(input, output) {
     
     leaflet() %>%
       addCircles(data = p) %>%
-      addCircles(data = v, color = "grey") %>%
+      addCircles(data = v, color = ~pal(p$TAXNUSDA)) %>%
       addRasterImage(r_sub) %>%
-      setView(lng = initial_lon, lat = initial_lat, zoom = 11)
+      setView(lng = initial_lon, lat = initial_lat, zoom = 11) %>% 
+      addLegend(pal = pal, values = p$TAXNUSDA)
   })
   
 })

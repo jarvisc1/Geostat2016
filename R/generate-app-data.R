@@ -25,6 +25,8 @@ p = p[bpol,]
 v = v[bpol,]
 plot(p)
 plot(v)
+p@data = as.data.frame(p@data)
+v@data = as.data.frame(v@data)
 
 # saveRDS(r, "geoapp1/raster-mini.Rds")
 # saveRDS(p, "geoapp1/training.Rds")
