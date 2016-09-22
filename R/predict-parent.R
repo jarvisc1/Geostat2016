@@ -110,19 +110,48 @@ save(validate_parent_per, file="validate_parent_per.r")
 rf1_mod <- train(TAXOUSDA~.,data=train_cc,method="rf",
                 trControl=ctrl,
                 allowParallel=TRUE)
-
+length(test$TAXOUSDA)
 predrf1 <- predict(rf1_mod, newdata = test)
 length(predrf1)
-cmrf1 <- confusionMatrix(predrf1, test$TAXOUSDA)
-cmrf1$overall[1] # 0.5984
+length(test$TAXOUSDA[!(is.na(test$LNDCOV6_100m)|is.na(test$PMTGSS7_100m))])
+cmrf1 <- confusionMatrix(predrf1, test$TAXOUSDA[!(is.na(test$LNDCOV6_100m)|is.na(test$PMTGSS7_100m))])
+cmrf1$overall[1] # 0.6018663
 
-# Predict on validation dataset
+# Predict on validation dataset # different length so slightly different process
 predrf1_v <- predict(rf1_mod, newdata = vbp_df)
 length(predrf1_v)
+vbpIndex <- !(is.na(vbp_df$LNDCOV6_100m)|is.na(vbp_df$PMTGSS7_100m))
+vbpcoord <- validate[vbpIndex,]
+vbpcoord$predrf1_v <- predrf1_v
 validate_p <- readr::read_csv("dat/validate_parent.csv")
-validate_p$rf1_mod <- predrf1_v
+validate_p <- dplyr::left_join(validate_p, vbpcoord)
 
 readr::write_csv(validate_p, "dat/validate_parent.csv")
 load("validate_parent_per.r")
 validate_parent_per <- c(validate_parent_per, cmrf1$overall[1])
+save(validate_parent_per, file="validate_parent_per.r")
+
+# RF model # just factor vars
+rf2_mod <- train(TAXOUSDA~ LNDCOV6_100m + PMTGSS7_100m,data=train_cc,method="rf",
+                trControl=ctrl,
+                allowParallel=TRUE)
+length(test$TAXOUSDA)
+predrf2 <- predict(rf2_mod, newdata = test)
+length(predrf2)
+length(test$TAXOUSDA[!(is.na(test$LNDCOV6_100m)|is.na(test$PMTGSS7_100m))])
+cmrf2 <- confusionMatrix(predrf2, test$TAXOUSDA[!(is.na(test$LNDCOV6_100m)|is.na(test$PMTGSS7_100m))])
+cmrf2$overall[1] # 0.4696734
+
+# Predict on validation dataset # different length so slightly different process
+predrf2_v <- predict(rf2_mod, newdata = vbp_df)
+length(predrf2_v)
+vbpIndex <- !(is.na(vbp_df$LNDCOV6_100m)|is.na(vbp_df$PMTGSS7_100m))
+vbpcoord <- validate[vbpIndex,]
+vbpcoord$predrf2_v <- predrf2_v
+validate_p <- readr::read_csv("dat/validate_parent.csv")
+validate_p <- dplyr::left_join(validate_p, vbpcoord)
+
+readr::write_csv(validate_p, "dat/validate_parent.csv")
+load("validate_parent_per.r")
+validate_parent_per <- c(validate_parent_per, cmrf2$overall[1])
 save(validate_parent_per, file="validate_parent_per.r")
