@@ -109,8 +109,7 @@ server <- shinyServer(function(input, output) {
     vo = dismo::voronoi(p)
     v$TAXNUSDA = NA
     if(input$model=="Voronoi"){
-      a <- raster::extract(vo, v)
-      v$TAXNUSDA <- a$TAXNUSDA
+      v$TAXNUSDA <- raster::extract(vo, v)$TAXNUSDA
     }
     
     r_sub = r[[input$raster_layer]]
