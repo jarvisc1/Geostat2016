@@ -108,6 +108,9 @@ server <- shinyServer(function(input, output) {
     r = projectRaster(r, crs = "+init=epsg:4326")
     vo = dismo::voronoi(p)
     v$TAXNUSDA = NA
+    if(input$model=="Voronoi"){
+      v$TAXNUSDA <- raster::extract(vo, v)
+    }
     
     r_sub = r[[input$raster_layer]]
     raster_pal = match.fun(input$raster_pal)
