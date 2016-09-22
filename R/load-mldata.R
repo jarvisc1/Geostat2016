@@ -56,9 +56,9 @@ tbp_p <- SpatialPointsDataFrame(p, data = tbp_df)
 
 
 # Extract raster variables for validation points
-vbp <- raster::extract(b,  p)
+vbp <- raster::extract(b,  pv)
 vbp_df <- as.data.frame(vbp)
-tdembp <- raster::extract(demb,  p)
+tdembp <- raster::extract(demb,  pv)
 tdembp_df <- as.data.frame(tdembp)
 vbp_df <- cbind(vbp_df, tdembp_df)
 
@@ -70,7 +70,7 @@ vbp_df$PMTGSS7_100m <- base::factor(as.factor(vbp_df$PMTGSS7_100m),
                                 levels = 1:70,
                                 labels = levels(d$PMTGSS7_100m))
 
-vbp_p <- SpatialPointsDataFrame(p, data = vbp_df)
+vbp_p <- SpatialPointsDataFrame(pv, data = vbp_df)
 
 
 
@@ -90,9 +90,12 @@ vbp_dfPCA$PMTGSS7_100m <- NULL
 vbp_pca <- princomp(vbp_dfPCA)
 vbp_pca <- as.data.frame(vbp_pca$scores) 
 
+learn$TAXOUSDA <- factor(learn$TAXOUSDA)
+learn$TAXNUSDA <- factor(learn$TAXNUSDA)
+
 # Clear Memory
 rm(list =setdiff(ls(),c("learn", "validate", "tbp_p", "vbp_p", "tbp_df", "vbp_df",
-                        "tbp_pca", "vbp_pca")))
+                        "tbp_pca", "vbp_pca", "p", "pv")))
 
 
 save.image(file = "dat/ML.rdata")
