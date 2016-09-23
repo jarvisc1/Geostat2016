@@ -140,12 +140,15 @@ server <- shinyServer(function(input, output) {
     raster_pal = match.fun(input$raster_pal)
     hide_v = ifelse(input$point_layer == "v", "nv", "v")
     
+    vorpopup <- paste0(vo$TAXNUSDA)
+    ppopup <- paste0(p$TAXNUSDA)
+    vpopup <- ifelse(is.na(v$TAXNUSDA), paste0("Select Model for Prediction"),paste0("Predicted: ", v$TAXNUSDA))
     leaflet() %>%
       addRasterImage(r_sub, raster_pal(n = 10)) %>%
-      addCircles(data = p, color = ~pal(p$TAXNUSDA), radius = input$pcircle_size, opacity = 1) %>%
-        addPolygons(data = vo, fillColor = ~pal(vo$TAXNUSDA), fillOpacity = 1, group = "v" ) %>% 
+      addCircles(data = p, color = ~pal(p$TAXNUSDA), radius = input$pcircle_size, opacity = 1, popup = ppopup) %>%
+        addPolygons(data = vo, fillColor = ~pal(vo$TAXNUSDA), fillOpacity = 1, group = "v", popup = vorpopup ) %>% 
       hideGroup(hide_v) %>% 
-      addCircles(data = v, color = ~pal(v$TAXNUSDA), radius = input$circle_size) %>%
+      addCircles(data = v, color = ~pal(v$TAXNUSDA), radius = input$circle_size, popup = vpopup) %>%
       addLegend(pal = pal, values = p$TAXNUSDA, title = "Soil type") %>%
       mapOptions(zoomToLimits = "first")  
     
