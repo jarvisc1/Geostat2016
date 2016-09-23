@@ -14,6 +14,7 @@ library(mapview)
 library(raster)
 library(deldir)
 library(dismo)
+library(caret)
 # Define UI for application that draws a histogram
 ui = shinyUI(fluidPage(
   fluidRow(
@@ -63,7 +64,7 @@ ui = shinyUI(fluidPage(
            ),
            hr(),
            fluidRow("  ", 
-                    selectInput(inputId = "model", label = "Model selection:", choices = c("None", "Random", "Voronoi", "Altitude-dependent"))
+                    selectInput(inputId = "model", label = "Model selection:", choices = c("None", "Random", "Voronoi", "Altitude-dependent", "Random Forest"))
            )
            # ,
            # hr(),
@@ -123,6 +124,9 @@ server <- shinyServer(function(input, output) {
       # aggregate(height ~ v$TAXNUSDA, FUN = mean) # test model
       # aggregate(height_training ~ p$TAXNUSDA, FUN = mean) # test model
     }    
+    if(input$model == "Random Forest"){
+      v$TAXNUSDA <- v$pred
+    }
     r_sub = r[[input$raster_layer]]
     raster_pal = match.fun(input$raster_pal)
     hide_v = ifelse(input$point_layer == "v", "nv", "v")
