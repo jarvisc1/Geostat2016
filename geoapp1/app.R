@@ -63,13 +63,13 @@ ui = shinyUI(fluidPage(
            ),
            hr(),
            fluidRow("  ", 
-                    selectInput(inputId = "model", label = "Model selection:", choices = c("None", "Random", "Voronoi", "Altitude-dependent"))
+                    selectInput(inputId = "model", label = "Model selection:",
+                                choices = c("None", "Random", "Voronoi", "Altitude-dependent"))
            )
            # ,
            # hr(),
-           # fluidRow(" ",
-           #   textOutput()
-           # )
+           # fluidRow("  ", verbatimTextOutput("textout")
+           #           )
            ),
     column(9,
            "Interactive map",
@@ -91,6 +91,13 @@ server <- shinyServer(function(input, output) {
   r = readRDS("raster-mini.Rds")
   sel_precip = grep(pattern = "PR", x = names(r))
   r$Precip = sum(r[[sel_precip]])
+  projections = c("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs") # Africa_Albers_Equal_Area_Conic 
+  aproj = projections
+  crs(r) = crs(p) = crs(v) = aproj
+  p = spTransform(p, CRS("+init=epsg:4326"))
+  v = spTransform(v, CRS("+init=epsg:4326"))
+  r = projectRaster(r, crs = "+init=epsg:4326")
+  vo = dismo::voronoi(p)
 
   # m <- mapview(r) + mapview(p)
   output$m = renderLeaflet({
@@ -101,13 +108,6 @@ server <- shinyServer(function(input, output) {
       r = aggregate(r, input$bins / 100)
     }
     
-    projections = c("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs") # Africa_Albers_Equal_Area_Conic 
-    aproj = projections
-    crs(r) = crs(p) = crs(v) = aproj
-    p = spTransform(p, CRS("+init=epsg:4326"))
-    v = spTransform(v, CRS("+init=epsg:4326"))
-    r = projectRaster(r, crs = "+init=epsg:4326")
-    vo = dismo::voronoi(p)
     v$TAXNUSDA = NA
     if(input$model=="Voronoi"){
       v$TAXNUSDA <- raster::extract(vo, v)$TAXNUSDA
@@ -137,11 +137,14 @@ server <- shinyServer(function(input, output) {
       mapOptions(zoomToLimits = "first")  
     
   })
+
+  output$textout = renderPrint(summary(v$TAXNUSDA))
   
   observe({
     input$reset_button
     leafletProxy("m") %>% setView(lat = initial_lat, lng = initial_lon, zoom = initial_zoom)
   })
+  
   
 })
 
