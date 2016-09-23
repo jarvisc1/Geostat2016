@@ -140,7 +140,7 @@ server <- shinyServer(function(input, output) {
     raster_pal = match.fun(input$raster_pal)
     hide_v = ifelse(input$point_layer == "v", "nv", "v")
     
-    vorpopup <- paste0(vo$TAXNUSDA)
+    vorpopup <- paste0("Voronoi Soil Type: ", vo$TAXNUSDA)
     ppopup <- paste0(p$TAXNUSDA)
     vpopup <- ifelse(is.na(v$TAXNUSDA), paste0("Select Model for Prediction"),paste0("Predicted: ", v$TAXNUSDA))
     leaflet() %>%
