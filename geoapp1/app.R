@@ -17,6 +17,7 @@ library(dismo)
 # Define UI for application that draws a histogram
 ui = shinyUI(fluidPage(
   fluidRow(
+    titlePanel(title = "GEOSTAT 2016 Game Entry: interactive visualisation understand spatial models"),
     column(3,
            "Controls",
            tabsetPanel(
@@ -62,7 +63,7 @@ ui = shinyUI(fluidPage(
            ),
            hr(),
            fluidRow("  ", 
-                    selectInput(inputId = "model", label = "Model selection:", choices = c("None", "Random", "Voronoi"))
+                    selectInput(inputId = "model", label = "Model selection:", choices = c("None", "Random", "Voronoi", "Altitude-dependent"))
            )
            # ,
            # hr(),
@@ -111,7 +112,17 @@ server <- shinyServer(function(input, output) {
     if(input$model=="Voronoi"){
       v$TAXNUSDA <- raster::extract(vo, v)$TAXNUSDA
     }
-    
+    if(input$model == "Random"){
+      v$TAXNUSDA <- sample(unique(p$TAXNUSDA), size = nrow(v), replace = T)
+    }
+    if(input$model == "Altitude-dependent"){
+      height = as.data.frame(extract(r, v))$DEMNED6_100m
+      height_training = as.data.frame(extract(r, p))$DEMNED6_100m
+      closest_height = sapply(height, function(x) which.min(abs(x - height_training)))
+      v$TAXNUSDA <- p$TAXNUSDA[closest_height]
+      # aggregate(height ~ v$TAXNUSDA, FUN = mean) # test model
+      # aggregate(height_training ~ p$TAXNUSDA, FUN = mean) # test model
+    }    
     r_sub = r[[input$raster_layer]]
     raster_pal = match.fun(input$raster_pal)
     hide_v = ifelse(input$point_layer == "v", "nv", "v")
