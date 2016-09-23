@@ -1,6 +1,8 @@
 # Aim: create app data
 source("R/load-spatial.R")
 library(raster)
+pred <- readr::read_csv('dat/prediction.csv')
+p_vrp$pred <- pred$pred
 plot(d)
 points(p)
 points(p_vrp, col = "grey")
